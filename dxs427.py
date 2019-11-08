@@ -2,12 +2,13 @@
 # CMPSC 442: Homework 5
 ############################################################
 
-student_name = "Type your full name here."
+student_name = "Dmytro Suprun"
 
 ############################################################
 # Imports
 ############################################################
-
+import string
+import re
 # Include your imports here, if any are used.
 
 
@@ -17,7 +18,9 @@ student_name = "Type your full name here."
 ############################################################
 
 def tokenize(text):
-    pass
+    word_punc_pattern = r"[" + string.punctuation + "]|[\w]+"
+    unparsed = re.findall(word_punc_pattern, text)
+    return unparsed
 
 def ngrams(n, tokens):
     pass

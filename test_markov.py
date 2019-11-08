@@ -5,15 +5,14 @@ import dxs427
 
 class TestMarkov(unittest.TestCase):
 
-    def test_can_get_internal_repr(self):
-        ham_dir = "homework4_data/train/ham/"
+    def test_can_tokenize(self):
         self.assertSequenceEqual(
-                ['of', 'my', 'outstanding', 'mail'],
-                dxs427.load_tokens(ham_dir+"ham1")[200:204],
-                'can\'t parse email'
+                ['This', 'is', 'an', 'example', '.'],
+                dxs427.tokenize(" This is an example. "),
+                'can\'t tokenize string.'
                 )
         self.assertSequenceEqual(
-                ['for', 'Preferences', '-', "didn't"],
-                dxs427.load_tokens(ham_dir+"ham2")[110:114],
-                'can\'t parse email'
+                ["'", 'Medium', '-', 'rare', ',', "'", 'she', 'said', '.'],
+                dxs427.tokenize("'Medium-rare,' she said."),
+                'can\'t tokenize string 2.'
                 )
