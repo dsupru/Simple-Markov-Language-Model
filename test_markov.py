@@ -35,3 +35,10 @@ class TestMarkov(unittest.TestCase):
                 dxs427.ngrams(3, ["a", "b", "c"]),
                 'can\'t parse n_grams 3.'
                 )
+
+    def test_can_ngram_empty_input(self):
+        self.assertSequenceEqual(
+                [(('<START>', '<START>'), '<END>')],
+                dxs427.ngrams(3, []),
+                'can\'t parse empty n_grams.'
+                )
