@@ -18,12 +18,17 @@ import re
 ############################################################
 
 def tokenize(text):
-    word_punc_pattern = r"[" + string.punctuation + "]|[\w]+"
-    unparsed = re.findall(word_punc_pattern, text)
-    return unparsed
+    parsed = re.findall(r"[{}]|[\w]+".format(string.punctuation), text)
+    return parsed
 
 def ngrams(n, tokens):
-    pass
+    n_gr = [(tuple(['<START>' if index - n +i < 0 \
+                    else tokens[index - n + i] for i in range(1, n)]), (word))\
+                        for index, word in enumerate(tokens)]
+    index = len(tokens)
+    n_gr.append( (tuple(['<START>' if index - n + i < 0 \
+                    else tokens[index - n + i] for i in range(1, n)]), '<END>'))
+    return n_gr
 
 class NgramModel(object):
 
