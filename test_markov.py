@@ -42,3 +42,42 @@ class TestMarkov(unittest.TestCase):
                 dxs427.ngrams(3, []),
                 'can\'t parse empty n_grams.'
                 )
+
+    def test_can_get_probability_of_a_token_given_context(self):
+        m = dxs427.NgramModel(1)
+        m.update("a b c d")
+        m.update("a b a b")
+        self.assertEqual(
+                0.3,
+                m.prob((), "a"),
+                'can\'t get token probabilities.'
+                )
+        self.assertEqual(
+                0.1,
+                m.prob((), "c"),
+                'can\'t get token probabilities.'
+                )
+        self.assertEqual(
+                0.2,
+                m.prob((), "<END>"),
+                'can\'t get token probabilities.'
+                )
+    def test_can_get_probability_2_given_context(self):
+        m = dxs427.NgramModel(2)
+        m.update("a b c d")
+        m.update("a b a b")
+        self.assertEqual(
+                1,
+                m.prob(("<START>",), "a"),
+                'can\'t get 2 probabilities.'
+                )
+        self.assertEqual(
+                0.3333333333333333,
+                m.prob(("b",), "c"),
+                'can\'t get 2 probabilities.'
+                )
+        self.assertEqual(
+                0.0,
+                m.prob(("a",), "x"),
+                'can\'t get 2 probabilities.'
+                )

@@ -18,8 +18,8 @@ import re
 ############################################################
 
 def tokenize(text):
-    parsed = re.findall(r"[{}]|[\w]+".format(string.punctuation), text)
-    return parsed
+    tokens = re.findall(r"[{}]|[\w]+".format(string.punctuation), text)
+    return tokens
 
 def ngrams(n, tokens):
     n_gr = [(tuple(['<START>' if index - n +i < 0 \
@@ -33,13 +33,32 @@ def ngrams(n, tokens):
 class NgramModel(object):
 
     def __init__(self, n):
-        pass
+        self.order_n = n
+        self.probabilities = dict()
 
+    # TODO speedup this function
     def update(self, sentence):
-        pass
+        new_input = ngrams(self.order_n, tokenize(sentence))
+        for context, token in new_input:
+            if context in self.probabilities:
+                if token in self.probabilities[context]:
+                    self.probabilities[context][token] += 1
+                else:
+                    new_token = {token: 1}
+                    self.probabilities[context].update(new_token)
+            else:
+                self.probabilities.update({context:{token: 1}})
 
     def prob(self, context, token):
-        pass
+        probability = 0
+        count = 0
+        if context in self.probabilities:
+            if token in self.probabilities[context]:
+                for a_token in self.probabilities[context]:
+                    count += self.probabilities[context][a_token]
+                probability =  self.probabilities[context][token]/count
+        # if it's not in the dictionary, returns 0
+        return probability
 
     def random_token(self, context):
         pass
