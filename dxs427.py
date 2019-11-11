@@ -114,13 +114,11 @@ Do not include these instructions in your response.
 """
 
 feedback_question_2 = """
-Type your response here.
-Your response may span multiple lines.
-Do not include these instructions in your response.
+It was fairly easy to do a brute-force solution.
+Optimization however was more involved.
 """
 
 feedback_question_3 = """
-Type your response here.
-Your response may span multiple lines.
-Do not include these instructions in your response.
+Was interesting to see the results of text generation.
+Also fun to observe how dramatically performance depends on a design decision.
 """

@@ -153,7 +153,7 @@ class TestMarkov(unittest.TestCase):
                 'can\'t calculate perplexity 1.'
                 )
 
-    def test_can_perplex(self):
+    def test_can_perplex_2(self):
         m = dxs427.NgramModel(2)
         m.update("a b c d")
         m.update("a b a b")
