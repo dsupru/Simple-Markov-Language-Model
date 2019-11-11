@@ -10,8 +10,7 @@ student_name = "Dmytro Suprun"
 import string
 import re
 import random
-# Include your imports here, if any are used.
-
+import math
 
 
 ############################################################
@@ -87,10 +86,22 @@ class NgramModel(object):
         return ' '.join(result)
 
     def perplexity(self, sentence):
-        pass
+        tokens = tokenize(sentence)
+        num_tokens = len(tokens)
+        p_model = ngrams(self.order_n, tokens)
+        sum = 0
+        for context, token in p_model:
+            sum += math.log(self.prob(context, token))
+        return math.pow(1/math.exp(sum), (1/(num_tokens+1)))
 
 def create_ngram_model(n, path):
-    pass
+    model = NgramModel(n)
+    with open(path, 'r') as file:
+        sentences = file.readlines()
+    for a_sentence in sentences:
+        model.update(a_sentence)
+    print('finished reading the file')
+    return model
 
 ############################################################
 # Section 2: Feedback
