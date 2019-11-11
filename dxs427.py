@@ -72,10 +72,19 @@ class NgramModel(object):
             else:
                 cumulative = summ
 
-        
-
     def random_text(self, token_count):
-        pass
+        starting_context = ['<START>' for _ in range(self.order_n-1)]
+        context = starting_context.copy()
+        result = list()
+        for i in range(token_count):
+            new_token = self.random_token(tuple(context))
+            result.append(new_token)
+            if new_token == '<END>':
+                context = starting_context.copy()
+            else:
+                context.append(new_token)
+                context.pop(0)
+        return ' '.join(result)
 
     def perplexity(self, sentence):
         pass

@@ -113,3 +113,25 @@ class TestMarkov(unittest.TestCase):
                 [m.random_token(("b",)) for i in range(6)],
                 'can\'t get random token 2.'
                 )
+
+    def test_can_get_random_text_1(self):
+        m = dxs427.NgramModel(1)
+        m.update("a b c d")
+        m.update("a b a b")
+        random.seed(1)
+        self.assertSequenceEqual(
+                '<END> c b a a a b b <END> <END> c a b',
+                m.random_text(13),
+                'can\'t get random text of 13.'
+                )
+
+    def test_can_get_random_text_2(self):
+        m = dxs427.NgramModel(2)
+        m.update("a b c d")
+        m.update("a b a b")
+        random.seed(2)
+        self.assertSequenceEqual(
+                'a b <END> a b c d <END> a b a b a b c',
+                m.random_text(15),
+                'can\'t get random text of 15.'
+                )
