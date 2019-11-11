@@ -9,6 +9,7 @@ student_name = "Dmytro Suprun"
 ############################################################
 import string
 import re
+import random
 # Include your imports here, if any are used.
 
 
@@ -60,8 +61,18 @@ class NgramModel(object):
         # if it's not in the dictionary, returns 0
         return probability
 
+    # TODO save tokens in the sorted order to avoid sorting extra time
     def random_token(self, context):
-        pass
+        cumulative = 0
+        r = random.random()
+        for token in sorted(self.probabilities[context]):
+            summ = cumulative + self.prob(context, token)
+            if summ > r:
+                return token
+            else:
+                cumulative = summ
+
+        
 
     def random_text(self, token_count):
         pass

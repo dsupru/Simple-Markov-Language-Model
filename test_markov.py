@@ -1,6 +1,7 @@
 import unittest
 import os
 import math
+import random
 import dxs427
 
 class TestMarkov(unittest.TestCase):
@@ -80,4 +81,35 @@ class TestMarkov(unittest.TestCase):
                 0.0,
                 m.prob(("a",), "x"),
                 'can\'t get 2 probabilities.'
+                )
+
+    def test_can_get_random_token_1(self):
+        m = dxs427.NgramModel(1)
+        m.update("a b c d")
+        m.update("a b a b")
+        random.seed(1)
+        self.assertSequenceEqual(
+                ['<END>', 'c', 'b', 'a', 'a', 'a',\
+                 'b', 'b', '<END>', '<END>', 'c', \
+                 'a', 'b', '<END>', 'a', 'b', 'a', \
+                 'd', 'd', '<END>', '<END>', 'b', \
+                 'd', 'a', 'a'],
+                [m.random_token(()) for i in range(25)],
+                'can\'t get random token 1.'
+                )
+
+    def test_can_get_random_token_2(self):
+        m = dxs427.NgramModel(2)
+        m.update("a b c d")
+        m.update("a b a b")
+        random.seed(2)
+        self.assertSequenceEqual(
+                ['a', 'a', 'a', 'a', 'a', 'a'],
+                [m.random_token(("<START>",)) for i in range(6)],
+                'can\'t get random token 2.'
+                )
+        self.assertSequenceEqual(
+                ['c', '<END>', 'a', 'a', 'a', '<END>'],
+                [m.random_token(("b",)) for i in range(6)],
+                'can\'t get random token 2.'
                 )
