@@ -22,6 +22,8 @@ def tokenize(text):
     tokens = re.findall(r"[{}]|[\w]+".format(string.punctuation), text)
     return tokens
 
+# the END token is hard-coded as it's easier than
+# having logic for it in the main constructing loop
 def ngrams(n, tokens):
     n_gr = [(tuple(['<START>' if index - n +i < 0 \
                     else tokens[index - n + i] for i in range(1, n)]), (word))\
@@ -31,20 +33,28 @@ def ngrams(n, tokens):
                     else tokens[index - n + i] for i in range(1, n)]), '<END>'))
     return n_gr
 
+# The purpose for StructuredTokens is to:
+# 1) keep the tokens in the sorted order
+# 2) save the count of the tokens to avoid recomputing it
 class StructuredTokens:
     def __init__(self):
         self.count = 0
+        # Counter provides nice handling of missing keys and of counting 
         self.counted_tokens = collections.Counter()
+        # Need OrderedDict as simple Dict doesn't guarantee order (until python 3.8)
         self.ordered_tokens = collections.OrderedDict()
+        # special variable that is False after every update and True after sorting
         self.ordered = False
 
     def up_count(self, a_token):
+        # when updating the count, elements can not be assumed to stay sorted
         self.ordered = False
         self.count += 1
         self.counted_tokens[a_token] += 1
 
     def __iter__(self):
         if not self.ordered:
+            # use the OrderedDict to keep the elements in the sorted order
             self.ordered_tokens = collections.OrderedDict(sorted(self.counted_tokens.items()))
             self.ordered = True
         return iter(self.ordered_tokens)
@@ -89,6 +99,8 @@ class NgramModel(object):
     def random_text(self, token_count):
         starting_context = ['<START>' for _ in range(self.order_n-1)]
         context = starting_context.copy()
+        # result will be a list which will get +1 at the end -1 at the front
+        # thus, imitating rotation of the elements and LRU policy
         result = list()
         for i in range(token_count):
             new_token = self.random_token(tuple(context))
