@@ -116,10 +116,10 @@ class NgramModel(object):
         tokens = tokenize(sentence)
         num_tokens = len(tokens)
         p_model = ngrams(self.order_n, tokens)
-        sum = 0
+        summ = 0
         for context, token in p_model:
-            sum += math.log(self.prob(context, token))
-        return math.pow(1/math.exp(sum), (1/(num_tokens+1)))
+            summ += math.log(self.prob(context, token))
+        return math.pow(1/math.exp(summ), (1/(num_tokens+1)))
 
 def create_ngram_model(n, path):
     model = NgramModel(n)
