@@ -11,6 +11,7 @@ import string
 import re
 import random
 import math
+import collections
 
 
 ############################################################
@@ -30,41 +31,55 @@ def ngrams(n, tokens):
                     else tokens[index - n + i] for i in range(1, n)]), '<END>'))
     return n_gr
 
+class StructuredTokens:
+    def __init__(self):
+        self.count = 0
+        self.counted_tokens = collections.Counter()
+        self.ordered_tokens = collections.OrderedDict()
+        self.ordered = False
+
+    def up_count(self, a_token):
+        self.ordered = False
+        self.count += 1
+        self.counted_tokens[a_token] += 1
+
+    def __iter__(self):
+        if not self.ordered:
+            self.ordered_tokens = collections.OrderedDict(sorted(self.counted_tokens.items()))
+            self.ordered = True
+        return iter(self.ordered_tokens)
+
+    def __next__(self):
+        for token in self.ordered_tokens.items():
+            yield token
+
 class NgramModel(object):
 
     def __init__(self, n):
         self.order_n = n
         self.probabilities = dict()
 
-    # TODO speedup this function
     def update(self, sentence):
         new_input = ngrams(self.order_n, tokenize(sentence))
         for context, token in new_input:
-            if context in self.probabilities:
-                if token in self.probabilities[context]:
-                    self.probabilities[context][token] += 1
-                else:
-                    new_token = {token: 1}
-                    self.probabilities[context].update(new_token)
-            else:
-                self.probabilities.update({context:{token: 1}})
+            if context not in self.probabilities:
+                token_str = StructuredTokens()
+                self.probabilities.update({context: token_str})
+            self.probabilities[context].up_count(token)
 
     def prob(self, context, token):
         probability = 0
         count = 0
         if context in self.probabilities:
-            if token in self.probabilities[context]:
-                for a_token in self.probabilities[context]:
-                    count += self.probabilities[context][a_token]
-                probability =  self.probabilities[context][token]/count
-        # if it's not in the dictionary, returns 0
+            # if it's not in the dictionary, Counter returns 0
+            probability =  self.probabilities[context].counted_tokens[token]\
+                    / self.probabilities[context].count
         return probability
 
-    # TODO save tokens in the sorted order to avoid sorting extra time
     def random_token(self, context):
         cumulative = 0
         r = random.random()
-        for token in sorted(self.probabilities[context]):
+        for token in self.probabilities[context]:
             summ = cumulative + self.prob(context, token)
             if summ > r:
                 return token
@@ -100,7 +115,6 @@ def create_ngram_model(n, path):
         sentences = file.readlines()
     for a_sentence in sentences:
         model.update(a_sentence)
-    print('finished reading the file')
     return model
 
 ############################################################
@@ -108,17 +122,16 @@ def create_ngram_model(n, path):
 ############################################################
 
 feedback_question_1 = """
-Type your response here.
-Your response may span multiple lines.
-Do not include these instructions in your response.
+About 10 hours.
 """
 
 feedback_question_2 = """
 It was fairly easy to do a brute-force solution.
-Optimization however was more involved.
+Optimization however was more involved but also more interesting.
 """
 
 feedback_question_3 = """
 Was interesting to see the results of text generation.
 Also fun to observe how dramatically performance depends on a design decision.
+Revisited data structures in search for a better solution which also was quite an interesting thing to do.
 """
