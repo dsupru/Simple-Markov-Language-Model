@@ -156,9 +156,10 @@ class TestMarkov(unittest.TestCase):
                 'can\'t calculate perplexity 2.'
                 )
     def test_can_create_model_from_file(self):
-        m = dxs427.create_ngram_model(5, 'frankenstein.txt')
+        m = dxs427.create_ngram_model(4, 'frankenstein.txt')
+        random.seed(4)
         self.assertSequenceEqual(
-                'a b <END> a b c d <END> a b a b a b c',
-                m.random_text(35),
+                'Clerval , who , born in freedom , spurned the bondage to which she was',
+                m.random_text(15),
                 'can\'t get random text from file.'
                 )
